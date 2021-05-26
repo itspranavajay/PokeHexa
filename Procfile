@@ -1,0 +1,1 @@
+pokehexa: node pokehexa.js
