@@ -1,0 +1,25 @@
+{
+    "name": "PokeHexa",
+    "description": "Pokemon Discord GBA Game.",
+    "logo": "https://telegra.ph/file/ca3cf548781f0f8007a0e.jpg",
+    "repository": "https://github.com/dankdel/pokehexa",
+    "env": {
+        "HEXA_TOKEN": {
+            "description": "Your Discord token for the bot",
+            "required": true
+        },
+        "HEXA_ROOM": {
+            "description": "your Discord channel id",
+            "required": true
+        },
+        "OWNER": {
+            "description": "your Discord account  id",
+            "required": true
+        }
+    },
+    "addons": [
+        {
+            "plan": "heroku-postgresql"
+        }
+    ]
+}
