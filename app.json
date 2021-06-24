@@ -2,7 +2,7 @@
     "name": "PokeHexa",
     "description": "Pokemon Discord GBA Game.",
     "logo": "https://telegra.ph/file/ca3cf548781f0f8007a0e.jpg",
-    "repository": "https://github.com/dankdel/pokehexa",
+    "repository": "https://github.com/MoeZilla/pokehexa",
     "env": {
         "HEXA_TOKEN": {
             "description": "Your Discord token for the bot",
