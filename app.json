@@ -1,6 +1,6 @@
 {
     "name": "PokeHexa",
-    "description": "Pokemon Discord GBA Game.",
+    "description": "Pokemon Discord GBA Game Play.",
     "logo": "https://telegra.ph/file/ca3cf548781f0f8007a0e.jpg",
     "repository": "https://github.com/MoeZilla/pokehexa",
     "env": {
