@@ -1,1 +1,1 @@
-pokehexa: node pokehexa.js
+moezilla: node pokehexa.js
