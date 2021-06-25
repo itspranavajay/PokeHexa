@@ -158,4 +158,6 @@ client.on("disconnect", () => {
     }, 15000);
 })
 
+#Moezilla is redaura 😆😆😆
+
 client.login(process.env.HEXA_TOKEN) //Login
