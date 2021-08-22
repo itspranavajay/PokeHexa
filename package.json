@@ -1,0 +1,20 @@
+{
+  "name": "pokehex",
+  "version": "0.0.1",
+  "description": "pokehexa",
+  "main": "pokehexa",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Skylar McCauley",
+  "license": "ISC",
+  "dependencies": {
+    "boxen": "^5.0.0",
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
+    "fs-extra": "^9.0.1",
+    "gbajs": "^1.1.2",
+    "moment": "^2.29.1"
+  }
+}
