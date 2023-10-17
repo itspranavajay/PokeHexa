@@ -1,162 +1,60 @@
-const {Client, MessageEmbed} = require("discord.js");
-require('dotenv').config()
-const moment = require('moment')
-const client = new Client();
-const fs = require('fs')
-const fse = require('fs-extra')
-
-const hexaroom = process.env.HEXA_ROOM
-
-client.on("ready", () => {
-
-    client.user.setActivity('to your inputs', {
-        type: 'LISTENING'
-    })
-    console.log('[Logged In] ' + client.user.tag)
-    console.log('[Time] ' + moment().format('MMMM Do YYYY, h:mm:ss a'))
-})
+const { Telegraf, Markup } = require('telegraf');
+require('dotenv').config();
+const moment = require('moment');
+const fs = require('fs');
+const fse = require('fs-extra');
 
 
-var GameBoyAdvance = require('gbajs');
- 
-var gba = new GameBoyAdvance();
- 
-gba.logLevel = gba.LOG_ERROR;
- 
-var biosBuf = fs.readFileSync('./node_modules/gbajs/resources/bios.bin');
-gba.setBios(biosBuf);
-gba.setCanvasMemory();
- 
-gba.loadRomFromFile('./hexa.gba', function (err, result) {
-  if (err) {
-    console.error('loadRom failed:', err);
-    process.exit(1);
-  }
-  gba.loadSavedataFromFile('./hexa.sav');
-  gba.runStable();
+
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
+bot.start((ctx) => {
+  ctx.reply('Bot started! Type /help to see the available commands.');
 });
 
-function updateScreen(idx, msg, d) {
-
-    var delay = 500
-    if(d) {
-        delay = 1250
-    }
-    setTimeout( () => {
-        var png = gba.screenshot();
-        png.pack().pipe(fs.createWriteStream('gba' + idx + '.png'));
-    setTimeout( () => {
-        var newScreen = new MessageEmbed()
-        .setTitle("Current Screen")
-        .attachFiles(['./hexa.png'])
-        .setImage('attachment://hexa.png')
-    if(!d) {
-        newScreen.setFooter("This command has pulled the latest frame of the game. Type \"help\" to learn how to play.")
-    } else {
-        newScreen.setFooter("Type \"screen\" to see the latest frame without using the controls.")
-    }
+bot.command('help', (ctx) => {
+  const helpMessage = `
+    Welcome to the botname
     
-    msg.channel.send(newScreen)
-    }, 250)
-    
-    
-    }, delay)
-    
-}
-function sendHelp(msg) {
-    var help = new MessageEmbed()
-        .setTitle("Help")
-        .setDescription("Welcome to the botname\n\n**Controls**\n" + 
-                        "`a` - Presses **A**\n" +
-                        "`b` - Presses **B**\n" +
-                        "`l` - Presses **R**\n" +
-                        "`r` - Presses **L**\n" +
-                        "`start` - Presses **START**\n" +
-                        "`select` - Presses **SELECT**\n" +
-                        "`up` - Presses **UP**\n" +
-                        "`down` - Presses **DOWN**\n" +
-                        "`left` - Presses **LEFT**\n" +
-                        "`right` - Presses **RIGHT**\n" +
-                        "`screen` - Shows the current screen\n" +
-                        "`help` - Shows this help message\n")
-        .setFooter("Made by RedAura")
-    msg.channel.send(help)
-}
+    **Controls**
+    /a - Presses A
+    /b - Presses B
+    /l - Presses R
+    /r - Presses L
+    /start - Presses START
+    /select - Presses SELECT
+    /up - Presses UP
+    /down - Presses DOWN
+    /left - Presses LEFT
+    /right - Presses RIGHT
+    /screen - Shows the current screen
+    /help - Shows this help message
+  `;
+  ctx.reply(helpMessage);
+});
 
-client.on("message", (message) => {
-    var keypad = gba.keypad
-    var idx = 0;
-    if(message.channel.id !== hexaroom) return;
-    if(message.author.id == client.user.id) return;
-    const args = message.content.split(" ");
+bot.command(['a', 'b', 'l', 'r', 'start', 'select', 'up', 'down', 'left', 'right'], (ctx) => {
+  const command = ctx.message.text.substr(1); // Remove the leading slash
+  // Process the command and update the screen
+  updateScreen(0, ctx, true);
+});
 
-    switch ((args[0].toString()).toUpperCase()) {
-        case 'A':
-            keypad.press(keypad.A)
-            updateScreen(idx, message, true)
-          break;
-        case 'B':
-            keypad.press(keypad.B)
-            updateScreen(idx, message, true)
-        break;
-        case 'L':
-            keypad.press(keypad.L)
-            updateScreen(idx, message, true)
-        break;
-        case 'R':
-            keypad.press(keypad.R)
-            updateScreen(idx, message, true)
-        break;
-        case 'UP':
-            keypad.press(keypad.UP)
-            updateScreen(idx, message, true)
-        break;
-        case 'DOWN':
-            keypad.press(keypad.DOWN)
-            updateScreen(idx, message, true)
-        break;
-        case 'LEFT':
-            keypad.press(keypad.LEFT)
-            updateScreen(idx, message, true)
-        break;
-        case 'RIGHT':
-            keypad.press(keypad.RIGHT)
-            updateScreen(idx, message, true)
-        break;
-        case 'START':
-            keypad.press(keypad.START)
-            updateScreen(idx, message, true)
-        break;
-        case 'SELECT':
-            keypad.press(keypad.SELECT)
-            updateScreen(idx, message, true)
-        break;
-        case 'SCREEN':
-            updateScreen(idx, message, false)
-        break;
-        case 'HELP':
-            sendHelp(message)
-        break;
-        default:
-          console.log(`Incorrect input: ${(args[0].toString()).toUpperCase()}`);
-        break;
-      }
+bot.command('screen', (ctx) => {
+  updateScreen(0, ctx, false);
+});
 
-    
-})
-
-
-client.on("error", (error) => {
-    console.log(error)
-})
-
-client.on("disconnect", () => {
+function updateScreen(idx, ctx, d) {
+  var delay = 500;
+  if (d) {
+    delay = 1250;
+  }
+  setTimeout(() => {
+    var png = gba.screenshot();
+    png.pack().pipe(fs.createWriteStream('gba' + idx + '.png'));
     setTimeout(() => {
-        client.user || (
-            client.login(config.token)
-        );
-    }, 15000);
-})
+      ctx.replyWithPhoto({ source: './hexa.png' }, { caption: 'Current Screen' });
+    }, 250);
+  }, delay);
+}
 
-
-client.login(process.env.HEXA_TOKEN) //Login
+bot.launch();
